@@ -4,6 +4,7 @@ import (
 	"context"
 	"ecommerce-go/database"
 	"ecommerce-go/models"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -87,8 +88,8 @@ func Signup() gin.HandlerFunc {
 
 		_, inserterr := UserCollection.InsertOne(ctx, user)
 
-		if inserterr := nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error","user not created"})
+		if inserterr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error", "user not created"})
 			return
 		}
 
@@ -101,7 +102,7 @@ func Signup() gin.HandlerFunc {
 }
 
 func Login() gin.HandlerFunc {
-	return func(c *gin.Context){
+	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		defer cancel()
 
@@ -129,10 +130,10 @@ func Login() gin.HandlerFunc {
 
 		token, refresh, _ := generate.TokenGenerator(
 			*founduser.Email,
-			 *founduser.First_Name,
-			  *founduser.Last_name,
-			  *founduser.User_ID
-			)
+			*founduser.First_Name,
+			*founduser.Last_name,
+			*founduser.User_ID,
+		)
 
 		defer cancel()
 
